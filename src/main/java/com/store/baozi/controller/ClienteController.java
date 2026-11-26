@@ -1,6 +1,7 @@
 package com.store.baozi.controller;
 
-import com.store.baozi.model.ClienteEntity;
+import com.store.baozi.dto.request.ClienteRequest;
+import com.store.baozi.dto.response.ClienteResponse;
 import com.store.baozi.service.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteEntity> cadastrar(@Valid @RequestBody ClienteEntity cliente) {
+    public ResponseEntity<ClienteResponse> cadastrar(@Valid @RequestBody ClienteRequest cliente) {
 
         var resposta = clienteService.criar(cliente);
 
@@ -28,7 +29,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClienteEntity>> listar() {
+    public ResponseEntity<List<ClienteResponse>> listar() {
         var resposta = clienteService.listar();
 
         return ResponseEntity.ok().body(resposta);
@@ -36,7 +37,7 @@ public class ClienteController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteEntity> listarPorId(@PathVariable Long id) {
+    public ResponseEntity<ClienteResponse> listarPorId(@PathVariable Long id) {
         var resposta = clienteService.listarPorId(id);
 
         return ResponseEntity.ok().body(resposta);

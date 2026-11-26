@@ -1,7 +1,7 @@
 package com.store.baozi.controller;
 
-import com.store.baozi.dto.EntradaDTO;
-import com.store.baozi.dto.PedidoDTO;
+import com.store.baozi.dto.request.PedidoRequest;
+import com.store.baozi.dto.response.PedidoResponse;
 import com.store.baozi.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,21 +22,21 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoDTO> cadastrar(@Valid @RequestBody EntradaDTO pedido) {
+    public ResponseEntity<PedidoResponse> cadastrar(@Valid @RequestBody PedidoRequest pedido) {
         var resposta = pedidoService.criar(pedido);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
     @GetMapping
-    public ResponseEntity<List<PedidoDTO>> listar() {
+    public ResponseEntity<List<PedidoResponse>> listar() {
         var resposta = pedidoService.listar();
 
         return ResponseEntity.ok().body(resposta);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoDTO> listarPorId(@PathVariable Long id) {
+    public ResponseEntity<PedidoResponse> listarPorId(@PathVariable Long id) {
         var resposta = pedidoService.listarPorId(id);
 
         return ResponseEntity.ok().body(resposta);

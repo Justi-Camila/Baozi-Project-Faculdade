@@ -1,5 +1,7 @@
 package com.store.baozi.service;
 
+import com.store.baozi.dto.request.ClienteRequest;
+import com.store.baozi.dto.response.ClienteResponse;
 import com.store.baozi.model.ClienteEntity;
 import com.store.baozi.repository.ClienteRepository;
 import com.store.baozi.repository.PedidoRepository;
@@ -21,16 +23,18 @@ public class ClienteService {
         this.pedidoRepository = pedidoRepository;
     }
 
-    public ClienteEntity criar(ClienteEntity cliente) {
-        return clienteRepository.save(cliente);
+    public ClienteResponse criar(ClienteRequest cliente) {
+        var clienteCriado = clienteRepository.save(new ClienteEntity(cliente.nome(), cliente.clienteDesde()));
+
+        return new ClienteResponse(clienteCriado);
     }
 
-    public List<ClienteEntity> listar() {
-        return clienteRepository.findAll();
+    public List<ClienteResponse> listar() {
+        return clienteRepository.findAll().stream().map(ClienteResponse::new).toList();
     }
 
-    public ClienteEntity listarPorId(Long id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+    public ClienteResponse listarPorId(Long id) {
+        return new ClienteResponse(buscar(id));
     }
 
     public void deletar(Long id) {
@@ -43,5 +47,10 @@ public class ClienteService {
         }
 
         clienteRepository.deleteById(id);
+    }
+
+    private ClienteEntity buscar(Long id) {
+        return clienteRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não foi encontrado um cliente com o id informado"));
     }
 }

@@ -1,9 +1,9 @@
-package com.store.baozi.dto;
+package com.store.baozi.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record EntradaDTO(
+public record PedidoRequest(
         @NotNull(message = "O id do cliente não pode ser null")
         Long clienteId,
 

@@ -1,5 +1,7 @@
 package com.store.baozi.service;
 
+import com.store.baozi.dto.request.ProdutoRequest;
+import com.store.baozi.dto.response.ProdutoResponse;
 import com.store.baozi.model.ProdutoEntity;
 import com.store.baozi.repository.PedidoRepository;
 import com.store.baozi.repository.ProdutoRepository;
@@ -21,16 +23,17 @@ public class ProdutoService {
         this.pedidoRepository = pedidoRepository;
     }
 
-    public ProdutoEntity criar(ProdutoEntity produto) {
-        return produtoRepository.save(produto);
+    public ProdutoResponse criar(ProdutoRequest produto) {
+        var produtoCriado = produtoRepository.save(new ProdutoEntity(produto.nome(), produto.preco(), produto.estoque()));
+        return new ProdutoResponse(produtoCriado);
     }
 
-    public List<ProdutoEntity> listar() {
-        return produtoRepository.findAll();
+    public List<ProdutoResponse> listar() {
+        return produtoRepository.findAll().stream().map(ProdutoResponse::new).toList();
     }
 
-    public ProdutoEntity listarPorId(Long id) {
-        return produtoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado"));
+    public ProdutoResponse listarPorId(Long id) {
+        return new ProdutoResponse(buscar(id));
     }
 
     public void deletar(Long id) {
@@ -43,5 +46,10 @@ public class ProdutoService {
         }
 
         produtoRepository.deleteById(id);
+    }
+
+    private ProdutoEntity buscar(Long id) {
+        return produtoRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não foi encontrado um produto com o id informado"));
     }
 }

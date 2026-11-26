@@ -1,9 +1,9 @@
 package com.store.baozi.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
-@Entity(name = "pedido")
+@Entity
+@Table(name = "pedido")
 public class PedidoEntity {
 
     @Id
@@ -18,15 +18,11 @@ public class PedidoEntity {
     @JoinColumn(name = "produto_id", nullable = false)
     private ProdutoEntity produto;
 
-    @NotNull
     private Integer quantidade;
 
-    public PedidoEntity() {}
-
-    public PedidoEntity(Long id, ClienteEntity clienteId, ProdutoEntity produtoId, Integer quantidade) {
-        this.id = id;
-        this.cliente = clienteId;
-        this.produto = produtoId;
+    public PedidoEntity(ClienteEntity cliente, ProdutoEntity produto, Integer quantidade) {
+        this.cliente = cliente;
+        this.produto = produto;
         this.quantidade = quantidade;
     }
 

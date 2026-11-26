@@ -1,7 +1,7 @@
 package com.store.baozi.service;
 
-import com.store.baozi.dto.EntradaDTO;
-import com.store.baozi.dto.PedidoDTO;
+import com.store.baozi.dto.request.PedidoRequest;
+import com.store.baozi.dto.response.PedidoResponse;
 import com.store.baozi.model.PedidoEntity;
 import com.store.baozi.repository.ClienteRepository;
 import com.store.baozi.repository.PedidoRepository;
@@ -27,7 +27,7 @@ public class PedidoService {
         this.produtoRepository = produtoRepository;
     }
 
-    public PedidoDTO criar(EntradaDTO entrada) {
+    public PedidoResponse criar(PedidoRequest entrada) {
         var cliente = clienteRepository.findById(entrada.clienteId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
         var produto = produtoRepository.findById(entrada.produtoId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado"));
 
@@ -35,21 +35,21 @@ public class PedidoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Produto sem estoque");
         }
 
-        var pedido = pedidoRepository.save(new PedidoEntity(null, cliente, produto, entrada.quantidade()));
+        var pedido = pedidoRepository.save(new PedidoEntity(cliente, produto, entrada.quantidade()));
 
-        return new PedidoDTO(pedido);
+        return new PedidoResponse(pedido);
     }
 
-    public List<PedidoDTO> listar() {
+    public List<PedidoResponse> listar() {
         var pedidos = pedidoRepository.findAll();
 
-        return pedidos.stream().map(PedidoDTO::new).toList();
+        return pedidos.stream().map(PedidoResponse::new).toList();
     }
 
-    public PedidoDTO listarPorId(Long id) {
+    public PedidoResponse listarPorId(Long id) {
         var pedido = pedidoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado"));
 
-        return new PedidoDTO(pedido);
+        return new PedidoResponse(pedido);
     }
 
     public void deletar(Long id) {
