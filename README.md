@@ -44,14 +44,16 @@ src/main/java/com/store/baozi
 ├── service      # regras de negócio e validações
 ├── repository   # acesso ao banco (Spring Data JPA)
 ├── model        # entidades JPA
-└── dto          # objetos de entrada e saída da API
+└── dto
+    ├── request  # dados aceitos nas requisições (com validações)
+    └── response # dados devolvidos pela API
 ```
 
 ## Entidades
 
 | Entidade | Campos principais |
 | --- | --- |
-| Cliente | `id`, `nome`, `clienteDesde` (preenchida automaticamente) |
+| Cliente | `id`, `nome`, `clienteDesde` (data do cadastro, enviada na requisição) |
 | Produto | `id`, `nome`, `preco`, `estoque` |
 | Pedido | `id`, cliente, produto, `quantidade` |
 
@@ -76,12 +78,18 @@ Um cliente faz muitos pedidos e um produto é vendido em muitos pedidos.
 
 ## Exemplos de requisição
 
-Todas as requisições e respostas usam JSON (`Content-Type: application/json`). Os valores abaixo são de exemplo.
+Todas as requisições e respostas usam JSON (`Content-Type: application/json`). Os valores abaixo são de exemplo. O `id` é sempre gerado pela API e ignorado se for enviado no corpo.
 
 **POST `/cliente`**
 
 ```json
-{ "nome": "CamilaJusti5288904" }
+{ "nome": "CamilaJusti5288904", "clienteDesde": "2026-11-25" }
+```
+
+Resposta (`201 Created`):
+
+```json
+{ "id": 1, "nome": "CamilaJusti5288904", "clienteDesde": "2026-11-25" }
 ```
 
 **POST `/produto`**
@@ -90,13 +98,19 @@ Todas as requisições e respostas usam JSON (`Content-Type: application/json`).
 { "nome": "bao", "preco": 5.00, "estoque": true }
 ```
 
+Resposta (`201 Created`):
+
+```json
+{ "id": 1, "nome": "bao", "preco": 5.00, "estoque": true }
+```
+
 **POST `/pedido`**
 
 ```json
 { "clienteId": 1, "produtoId": 1, "quantidade": 10 }
 ```
 
-Resposta do pedido (`201 Created`):
+Resposta (`201 Created`):
 
 ```json
 {
@@ -108,17 +122,19 @@ Resposta do pedido (`201 Created`):
 }
 ```
 
-## Regras de negócio
+## Validações e regras de negócio
 
-- Todo pedido tem um cliente, um produto e uma quantidade maior que zero.
+- Cliente: `nome` não pode ser vazio; `clienteDesde` é obrigatória e não pode ser uma data futura (formato `AAAA-MM-DD`).
+- Produto: `nome` não pode ser vazio; `preco` é obrigatório, maior que zero e com até 5 dígitos inteiros e 2 casas decimais; `estoque` é obrigatório (`true` ou `false`).
+- Pedido: `clienteId`, `produtoId` e `quantidade` são obrigatórios, e a quantidade deve ser maior que zero.
 - Só é possível registrar pedido de um produto com `estoque` igual a `true`.
+- O cliente e o produto do pedido precisam existir.
 - Cliente ou produto que já tem pedidos não pode ser apagado: apague os pedidos antes.
-- Os campos obrigatórios são validados, e o preço do produto deve ser maior que zero.
 
 ## Códigos de erro
 
 | Status | Quando acontece |
 | --- | --- |
-| 400 | Dados inválidos (campo obrigatório ausente, quantidade ou preço inválidos) ou produto sem estoque |
+| 400 | Dados inválidos (campo obrigatório ausente, data futura, preço ou quantidade inválidos) ou produto sem estoque |
 | 404 | Cliente, produto ou pedido não encontrado |
 | 409 | Tentativa de apagar cliente ou produto que possui pedidos |

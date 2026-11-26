@@ -16,6 +16,9 @@ public class ClienteEntity {
 
     private LocalDate clienteDesde;
 
+    public ClienteEntity() {
+    }
+
     public ClienteEntity(String nome, LocalDate clienteDesde) {
         this.nome = nome;
         this.clienteDesde = clienteDesde;

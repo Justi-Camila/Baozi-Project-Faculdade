@@ -18,6 +18,9 @@ public class ProdutoEntity {
 
     private Boolean estoque;
 
+    public ProdutoEntity() {
+    }
+
     public ProdutoEntity(String nome, BigDecimal preco, Boolean estoque) {
         this.nome = nome;
         this.preco = preco;

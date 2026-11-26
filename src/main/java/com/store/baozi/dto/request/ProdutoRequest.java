@@ -11,11 +11,12 @@ public record ProdutoRequest(
         @NotBlank(message = "Preencha o nome do produto")
         String nome,
 
-        @Positive
+        @Positive(message = "O preçc precisa ser um número positivo")
+        @NotNull(message = "O preço não pode ser nulo")
         @Digits(integer = 5, fraction = 2)
         BigDecimal preco,
 
-        @NotNull
+        @NotNull(message = "O estoque não pode ser nulo")
         Boolean estoque
 ) {
 }

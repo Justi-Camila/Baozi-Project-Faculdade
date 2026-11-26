@@ -20,6 +20,9 @@ public class PedidoEntity {
 
     private Integer quantidade;
 
+    public PedidoEntity() {
+    }
+
     public PedidoEntity(ClienteEntity cliente, ProdutoEntity produto, Integer quantidade) {
         this.cliente = cliente;
         this.produto = produto;
